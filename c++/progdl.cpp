@@ -6,12 +6,12 @@
 
 using namespace std;
 
-AbstractBlock *(*getBlockInstance)(Block *);
+AbstractBlock *(*getBlockInstance)(int);
 
 void load_functions(void *lib_handle){
     char *error;
 
-    getBlockInstance = (AbstractBlock *(*)(Block *))dlsym(lib_handle, "getInstance");
+    getBlockInstance = (AbstractBlock *(*)(int))dlsym(lib_handle, "getInstance");
 
     if ((error = dlerror()) != NULL)
     {
@@ -48,26 +48,11 @@ main(int argc, char **argv)
     void *lib_handle = load_library(LIB_PATH.c_str());
     load_functions(lib_handle);
 
-    Block block1;
-    Block block2;
-
-    block1.id = 1;
-    block2.id = 3;
-    
-    AbstractBlock *myBlock1 = getBlockInstance(&block1);
-    AbstractBlock *myBlock2 = getBlockInstance(&block2);
+    AbstractBlock *myBlock1 = getBlockInstance(1);
+    AbstractBlock *myBlock2 = getBlockInstance(2);
 
     myBlock1->init();
     myBlock2->init();
-
-    Event ev;
-    ev.eventType = MSG_CONNECT;
-    myBlock1->onEvent(&ev);
-    myBlock2->onEvent(&ev);
-
-    ev.eventType = MSG_POSITION;
-    myBlock1->onEvent(&ev);
-    myBlock2->onEvent(&ev);
 
     close_library(lib_handle);
     cout << "Unload library" << endl;
