@@ -6,23 +6,18 @@
 
 using namespace std;
 
-void (*block_init)(Block *);
-void (*block_onEvent)(Block *, Event *);
-void (*block_deleteData)(Block *);
-
 void load_functions(void *lib_handle){
     char *error;
 
-    block_init = (void (*)(Block *))dlsym(lib_handle, "init");
-    block_onEvent = (void (*)(Block *, Event *))dlsym(lib_handle, "onEvent");
-    block_deleteData = (void (*)(Block *))dlsym(lib_handle, "deleteData");
+    init_ = (void (*)(Block *, int))dlsym(lib_handle, "init");
+    onEvent_ = (void (*)(Block *, Event))dlsym(lib_handle, "onEvent");
+    deleteData_ = (void (*)(Block *))dlsym(lib_handle, "deleteData");
 
     if ((error = dlerror()) != NULL)
     {
         fprintf(stderr, "%s\n", error);
         exit(1);
     }
-
 }
 
 void *load_library(const char *library_path) {
@@ -55,26 +50,12 @@ main(int argc, char **argv)
     Block block1;
     Block block2;
 
-    block1.id = 1;
-    block2.id = 3;
+    init_(&block1, 1);
+    init_(&block2, 3);
 
-    block_init(&block1);
-    block_init(&block2);
 
-    cout << "First block name = " << block1.myName << endl;
-    cout << "Second block name = " <<  block2.myName << endl;
-
-    Event ev;
-    ev.eventType = MSG_CONNECT;
-    block_onEvent(&block1, &ev);
-    block_onEvent(&block2, &ev);
-
-    ev.eventType = MSG_POSITION;
-    block_onEvent(&block1, &ev);
-    block_onEvent(&block2, &ev);
-
-    block_deleteData(&block1);
-    block_deleteData(&block2);
+    deleteData_(&block1);
+    deleteData_(&block2);
     cout << "Memory free" << endl;
     
     close_library(lib_handle);
