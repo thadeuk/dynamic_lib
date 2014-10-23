@@ -11,8 +11,7 @@ typedef struct {
 
 typedef struct {
     int id;
-    int *myInt;
-    char *myName;
+    void *myBlock;
 } Block;
 
 void (*init_)(Block *, int id);
@@ -24,12 +23,12 @@ void sendAction(Block *block, Event event) {
     switch (event.eventType) {
 
         case MSG_ASK_CONNECTION:
-            printf("Block %s -> Asking connection\n", block->myName) ;
+            printf("Block %d -> Asking connection\n", block->id) ;
             ev.eventType = MSG_CONNECTION_ACCEPTED;
             onEvent_(block, ev);
             break;
         case MSG_SEND_INT:
-            printf("Block %s -> Send int -> %d\n", block->myName, *(int *)(event.msgData)) ;
+            printf("Block %d -> Send int -> %d\n", block->id, *(int *)(event.msgData)) ;
             ev.eventType = MSG_CLOSE_CONNECTION;
             onEvent_(block, ev);
             break;
