@@ -53,7 +53,6 @@ main(int argc, char **argv)
     init_(&block1, 1);
     init_(&block2, 3);
 
-
     deleteData_(&block1);
     deleteData_(&block2);
     cout << "Memory free" << endl;

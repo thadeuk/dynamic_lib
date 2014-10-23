@@ -60,7 +60,7 @@ public:
 };
 
 extern "C" {
-    MyBlock *getInstance(int id)
+    AbstractBlock *getInstance(int id)
     {
         return new MyBlock(id);
     }
